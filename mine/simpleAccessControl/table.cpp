@@ -59,12 +59,21 @@ public:
 private:
     State state_;
     const static size_t TABLE_SIZE = 5;
+    // method 1: using std::bind
+    // StateTransition transition_table[TABLE_SIZE] = {
+    //     {State::Locked, Event::swipe_card, State::Unlocked, std::bind(&AccessControl::unlock_door, this)},
+    //     {State::Unlocked, Event::open_door, State::Unlocked, std::bind(&AccessControl::open_door, this)},
+    //     {State::Unlocked, Event::close_door, State::Locked, std::bind(&AccessControl::close_door, this)},
+    //     {State::Unlocked, Event::reset, State::Locked, std::bind(&AccessControl::reset, this)},
+    //     {State::Alarm, Event::reset, State::Locked, std::bind(&AccessControl::reset, this)}
+    // };
+    // method 2: using lambda
     StateTransition transition_table[TABLE_SIZE] = {
-        {State::Locked, Event::swipe_card, State::Unlocked, std::bind(&AccessControl::unlock_door, this)},
-        {State::Unlocked, Event::open_door, State::Unlocked, std::bind(&AccessControl::open_door, this)},
-        {State::Unlocked, Event::close_door, State::Locked, std::bind(&AccessControl::close_door, this)},
-        {State::Unlocked, Event::reset, State::Locked, std::bind(&AccessControl::reset, this)},
-        {State::Alarm, Event::reset, State::Locked, std::bind(&AccessControl::reset, this)}
+        {State::Locked, Event::swipe_card, State::Unlocked, [this]() { unlock_door(); }},
+        {State::Unlocked, Event::open_door, State::Unlocked, [this]() { open_door(); }},
+        {State::Unlocked, Event::close_door, State::Locked, [this]() { close_door(); }},
+        {State::Unlocked, Event::reset, State::Locked, [this]() { reset(); }},
+        {State::Alarm, Event::reset, State::Locked, [this]() { reset(); }}
     };
 
     void unlock_door() {
