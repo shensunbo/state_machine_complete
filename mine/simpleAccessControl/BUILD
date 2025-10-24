@@ -12,3 +12,8 @@ cc_binary(
     name = "state_pattern",
     srcs = ["state_pattern.cpp"],
 )
+
+cc_binary(
+    name = "smlBased",
+    srcs = ["smlBased.cpp", "sml.hpp"],
+)
